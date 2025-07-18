@@ -1,5 +1,5 @@
-https://cult-fitness-ten.vercel.app/
-
+frontend :- https://cult-fitness-ten.vercel.app/
+backend :- https://cult-fitness-1.onrender.com
 # Cult Fitness
 
 Cult Fitness is a modern fitness web application designed to help users manage their workout plans, diet plans, and fitness subscriptions. It offers personalized workout and diet plans, progress tracking, and seamless payment integration.
