@@ -1,7 +1,7 @@
-import type { ObjectId } from "mongodb"
+// src/types/user.ts
 
 export interface User {
-  _id?: ObjectId
+  _id?: string
   email: string
   password: string
   firstName: string

@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard';
 import Plans from './pages/Plans';
 import ProtectedRoute from './components/ProtectedRoute';
 
+
 function App() {
   return (
     <AuthProvider>

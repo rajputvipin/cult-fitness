@@ -1,8 +1,8 @@
-import type { ObjectId } from "mongodb"
+// src/types/payment.ts (or suitable path in your frontend)
 
 export interface Payment {
-  _id?: ObjectId
-  userId: ObjectId
+  _id?: string
+  userId: string
   planType: "Basic" | "Premium" | "Elite"
   amount: number
   currency: "INR"
@@ -24,14 +24,14 @@ export interface Payment {
 }
 
 export interface Subscription {
-  _id?: ObjectId
-  userId: ObjectId
+  _id?: string
+  userId: string
   planType: "Basic" | "Premium" | "Elite"
   status: "active" | "expired" | "cancelled" | "suspended"
   startDate: Date
   endDate: Date
   autoRenew: boolean
-  paymentId: ObjectId
+  paymentId: string
   features: {
     personalTraining: boolean
     nutritionConsultation: boolean

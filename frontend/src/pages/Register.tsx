@@ -8,46 +8,49 @@ const Register: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    
-    if (formData.password !== formData.confirmPassword) {
+
+    const { name, email, phone, password, confirmPassword } = formData;
+
+    if (password !== confirmPassword) {
       setError('Passwords do not match');
       setIsLoading(false);
       return;
     }
-    
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
       setIsLoading(false);
       return;
     }
-    
+
     try {
-      await register(formData.name, formData.email, formData.password);
+      await register(name, email, password, phone);
       navigate('/dashboard');
-    } catch (_err) {
-      setError('Registration failed. Please try again.');
+    } catch (err: any) {
+      const msg =
+        err.response?.data?.message || 'Registration failed. Please try again.';
+      setError(msg);
     } finally {
       setIsLoading(false);
     }
@@ -81,6 +84,7 @@ const Register: React.FC = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Full Name */}
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
                 Full Name
@@ -92,11 +96,12 @@ const Register: React.FC = () => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-gray-400 transition-colors duration-200"
                 placeholder="Enter your full name"
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
             </div>
 
+            {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email Address
@@ -108,11 +113,29 @@ const Register: React.FC = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-gray-400 transition-colors duration-200"
                 placeholder="Enter your email"
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
             </div>
 
+            {/* Phone */}
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                required
+                placeholder="Enter your phone number"
+                className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Password */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Password
@@ -125,23 +148,20 @@ const Register: React.FC = () => {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-gray-400 transition-colors duration-200 pr-12"
                   placeholder="Create a password"
+                  className="w-full px-4 py-3 pr-12 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors duration-200"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
                 >
-                  {showPassword ? (
-                    <EyeSlashIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5" />
-                  )}
+                  {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
                 </button>
               </div>
             </div>
 
+            {/* Confirm Password */}
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
                 Confirm Password
@@ -154,43 +174,41 @@ const Register: React.FC = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-gray-400 transition-colors duration-200 pr-12"
                   placeholder="Confirm your password"
+                  className="w-full px-4 py-3 pr-12 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors duration-200"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
                 >
-                  {showConfirmPassword ? (
-                    <EyeSlashIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5" />
-                  )}
+                  {showConfirmPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
                 </button>
               </div>
             </div>
 
+            {/* Terms */}
             <div className="flex items-center">
               <input
                 id="terms"
                 name="terms"
                 type="checkbox"
                 required
-                className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-600 bg-gray-700 rounded"
+                className="h-4 w-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500"
               />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-300">
+              <label htmlFor="terms" className="ml-2 text-sm text-gray-300">
                 I agree to the{' '}
-                <Link to="/terms" className="text-purple-400 hover:text-purple-300 transition-colors duration-200">
+                <Link to="/terms" className="text-purple-400 hover:text-purple-300">
                   Terms of Service
                 </Link>{' '}
                 and{' '}
-                <Link to="/privacy" className="text-purple-400 hover:text-purple-300 transition-colors duration-200">
+                <Link to="/privacy" className="text-purple-400 hover:text-purple-300">
                   Privacy Policy
                 </Link>
               </label>
             </div>
 
+            {/* Submit Button */}
             <motion.button
               type="submit"
               disabled={isLoading}
@@ -205,10 +223,7 @@ const Register: React.FC = () => {
           <div className="mt-8 text-center">
             <p className="text-gray-400">
               Already have an account?{' '}
-              <Link
-                to="/login"
-                className="text-purple-400 hover:text-purple-300 font-medium transition-colors duration-200"
-              >
+              <Link to="/login" className="text-purple-400 hover:text-purple-300 font-medium">
                 Sign in here
               </Link>
             </p>

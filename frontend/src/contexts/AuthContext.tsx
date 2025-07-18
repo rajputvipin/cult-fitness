@@ -1,72 +1,140 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { User } from '../types';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
+
+interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  plan: string;
+  stats: any;
+  preferences: any;
+  profileImage?: string;
+  planExpiresAt?: string;
+}
 
 interface AuthContextType {
   user: User | null;
+  loading: boolean;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    phone: string
+  ) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
-  isAuthenticated: boolean;
+  updateProfile: (updatedData: Partial<User>) => Promise<void>;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const login = async (email: string, _password: string) => {
-    // Mock login - in real app, this would call an API
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const mockUser: User = {
-      id: '1',
-      name: 'John Doe',
-      email,
-      plan: 'premium',
-      joinDate: '2024-01-15',
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await axios.get(`${API_BASE_URL}/api/user/dashboard`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUser(res.data.user);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+        logout(); // token invalid/expired
+      } finally {
+        setLoading(false);
+      }
     };
-    
-    setUser(mockUser);
+
+    fetchUser();
+  }, []);
+
+  const register = async (
+    name: string,
+    email: string,
+    password: string,
+    phone: string
+  ) => {
+    const [firstName, ...lastNameParts] = name.trim().split(" ");
+    const lastName = lastNameParts.join(" ");
+
+    const response = await axios.post(`${API_BASE_URL}/api/auth/signup`, {
+      firstName,
+      lastName,
+      email,
+      password,
+      phone,
+    });
+
+    const { user, token } = response.data;
+    setUser(user);
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
   };
 
-  const register = async (name: string, email: string, _password: string) => {
-    // Mock registration - in real app, this would call an API
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const newUser: User = {
-      id: Date.now().toString(),
-      name,
+  const login = async (email: string, password: string) => {
+    const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
       email,
-      plan: 'free',
-      joinDate: new Date().toISOString().split('T')[0],
-    };
-    
-    setUser(newUser);
+      password,
+    });
+
+    const { user, token } = response.data;
+    setUser(user);
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
   };
 
-  const value = {
-    user,
-    login,
-    register,
-    logout,
-    isAuthenticated: !!user,
+  const updateProfile = async (updatedData: Partial<User>) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const response = await axios.put(
+      `${API_BASE_URL}/api/user/dashboard`,
+      updatedData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setUser(response.data.user);
+    localStorage.setItem("user", JSON.stringify(response.data.user));
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{ user, loading, register, login, logout, updateProfile }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };

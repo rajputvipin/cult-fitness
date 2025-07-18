@@ -1,4 +1,4 @@
-import type { ObjectId } from "mongodb"
+// src/types/workout.ts (or a similar location in your frontend project)
 
 export interface Exercise {
   name: string
@@ -15,8 +15,8 @@ export interface Exercise {
 }
 
 export interface WorkoutPlan {
-  _id?: ObjectId
-  userId: ObjectId
+  _id?: string
+  userId: string
   name: string
   description: string
   difficulty: "beginner" | "intermediate" | "advanced"
@@ -25,16 +25,16 @@ export interface WorkoutPlan {
   exercises: Exercise[]
   caloriesBurnedEstimate: number
   createdBy: "system" | "trainer"
-  trainerId?: ObjectId
+  trainerId?: string
   isActive: boolean
   createdAt: Date
   updatedAt: Date
 }
 
 export interface WorkoutSession {
-  _id?: ObjectId
-  userId: ObjectId
-  workoutPlanId: ObjectId
+  _id?: string
+  userId: string
+  workoutPlanId: string
   date: Date
   startTime: Date
   endTime?: Date
@@ -60,13 +60,13 @@ export interface WorkoutSession {
 }
 
 export interface WeeklyPlan {
-  _id?: ObjectId
-  userId: ObjectId
+  _id?: string
+  userId: string
   weekStartDate: Date
   weekEndDate: Date
   plan: {
     day: "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday"
-    workoutPlanId?: ObjectId
+    workoutPlanId?: string
     isRestDay: boolean
     completed: boolean
   }[]

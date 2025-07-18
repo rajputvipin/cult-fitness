@@ -1,6 +1,6 @@
-import jwt from "jsonwebtoken"
-import bcrypt from "bcryptjs"
-import type { NextRequest } from "next/server"
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import type { NextRequest } from "next/server";
 
 if (!process.env.JWT_SECRET) {
   throw new Error('Invalid/Missing environment variable: "JWT_SECRET"')

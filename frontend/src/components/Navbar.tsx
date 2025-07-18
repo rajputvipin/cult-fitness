@@ -6,7 +6,7 @@ import { Bars3Icon, XMarkIcon, UserCircleIcon } from '@heroicons/react/24/outlin
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -52,7 +52,7 @@ const Navbar: React.FC = () => {
 
           {/* Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
-            {isAuthenticated ? (
+            {user ? (
               <div className="flex items-center space-x-4">
                 <Link
                   to="/dashboard"
@@ -60,9 +60,9 @@ const Navbar: React.FC = () => {
                 >
                   Dashboard
                 </Link>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 cursor-pointer">
                   <UserCircleIcon className="h-6 w-6 text-gray-300" />
-                  <span className="text-gray-300">{user?.name}</span>
+                  <span className="text-gray-300">Welcome back, {user.firstName}</span>
                 </div>
                 <button
                   onClick={handleLogout}
@@ -122,7 +122,7 @@ const Navbar: React.FC = () => {
               {item.name}
             </Link>
           ))}
-          {isAuthenticated ? (
+          {user ? (
             <>
               <Link
                 to="/dashboard"

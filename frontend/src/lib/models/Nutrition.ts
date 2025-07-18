@@ -1,8 +1,8 @@
-import type { ObjectId } from "mongodb"
+// src/types/nutrition.ts (or wherever you store your frontend types)
 
 export interface NutritionPlan {
-  _id?: ObjectId
-  userId: ObjectId
+  _id?: string
+  userId: string
   name: string
   description: string
   goal: "weight-loss" | "muscle-gain" | "maintenance" | "endurance"
@@ -34,14 +34,14 @@ export interface NutritionPlan {
   }[]
   isActive: boolean
   createdBy: "system" | "nutritionist"
-  nutritionistId?: ObjectId
+  nutritionistId?: string
   createdAt: Date
   updatedAt: Date
 }
 
 export interface FoodLog {
-  _id?: ObjectId
-  userId: ObjectId
+  _id?: string
+  userId: string
   date: Date
   meals: {
     type: "breakfast" | "lunch" | "dinner" | "snack"

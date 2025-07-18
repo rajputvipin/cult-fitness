@@ -12,15 +12,20 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@types/react-router-dom": "^5.3.3",
+    "axios": "^1.10.0",
+    "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.0",
     "framer-motion": "^12.23.5",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.344.0",
+    "next": "^15.4.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.6.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.0.14",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
