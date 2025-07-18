@@ -1,0 +1,12 @@
+# Normalize all files to LF line endings
+* text=auto eol=lf
+
+# Force LF on source files (you can add more extensions if needed)
+*.js     text eol=lf
+*.ts     text eol=lf
+*.tsx    text eol=lf
+*.jsx    text eol=lf
+*.css    text eol=lf
+*.html   text eol=lf
+*.json   text eol=lf
+*.md     text eol=lf
